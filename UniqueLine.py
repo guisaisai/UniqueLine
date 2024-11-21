@@ -3,22 +3,30 @@ import sublime_plugin
 
 class UniqueLine(sublime_plugin.TextCommand):
     def run(self, edit):
-        # 获取当前视图的所有文本
-        full_text = self.view.substr(sublime.Region(0, self.view.size()))
+        # 获取当前视图的所有文本区域
+        region = sublime.Region(0, self.view.size())
         
-        # 将文本按行分割，并去除每行前后的空白字符
-        lines = full_text.splitlines()
-        
-        # 过滤空行并去除每行的前后空白
-        lines = [line.strip() for line in lines if line.strip()]
-        
-        # 使用集合去重，保持顺序
+        # 使用集合存储已处理的行
         seen = set()
-        unique_lines = []
-        for line in lines:
-            if line not in seen:
-                unique_lines.append(line)
-                seen.add(line)
+
+        # 获取所有行的Region
+        lines = self.view.lines(region)
         
-        # 将去重后的内容重新设置回文本
-        self.view.replace(edit, sublime.Region(0, self.view.size()), "\n".join(unique_lines))
+        # 记录待删除的区域
+        lines_to_delete = []
+
+        # 逐行遍历文本区域
+        for line_region in lines:
+            line = self.view.substr(line_region).strip()  # 获取每一行并去除前后的空白字符
+            
+            # 如果是第一次看到该行，则保留它
+            if line and line not in seen:
+                seen.add(line)
+            else:
+                # 如果已经见过该行，则记录需要删除的行区域
+                lines_to_delete.append(line_region)
+
+        # 删除重复的行
+        for line_region in reversed(lines_to_delete):
+            self.view.erase(edit, line_region)
+
