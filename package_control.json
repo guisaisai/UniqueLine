@@ -1,0 +1,14 @@
+{
+  "packages": [
+    {
+      "name": "UniqueLine",
+      "author": "owell",
+      "description": "Delete duplicate rows",
+      "homepage": "https://github.com/guisaisai/UniqueLine",
+      "repository": "https://github.com/guisaisai/UniqueLine.git",
+      "version": "1.0.0",
+      "tags": ["plugin", "sublime"],
+      "platforms": ["*"]
+    }
+  ]
+}
